@@ -82,13 +82,14 @@ export async function POST(req: Request) {
         technologies: technologies ?? [],
         links: links ?? [],
         status,
-        date: date ? new Date(date) : null,
+        date: date
+          ? new Date(date).toISOString().split("T")[0] // ← تبدیل درست برای ستون date
+          : null,
         clientName,
         seoTitle,
         seoDescription,
       })
-      .$returningId(); // ← مخصوص MySQL
-
+      .returning(); // ← مخصوص PostgreSQL
     const portfolioId = inserted[0].id;
 
     // -------------------------

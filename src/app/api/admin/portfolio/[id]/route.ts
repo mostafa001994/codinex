@@ -34,12 +34,12 @@ export async function GET(req: Request, context: any) {
 
     const tagIds = tagLinks.map((t) => t.tagId);
 
-const tagTitles = tagIds.length
-  ? await db
-      .select({ name: tags.name })   // فقط name
-      .from(tags)
-      .where(inArray(tags.id, tagIds))
-  : [];
+    const tagTitles = tagIds.length
+      ? await db
+        .select({ name: tags.name })   // فقط name
+        .from(tags)
+        .where(inArray(tags.id, tagIds))
+      : [];
 
     // گالری
     const gallery = await db
@@ -106,7 +106,9 @@ export async function PUT(req: Request, context: any) {
         technologies: technologies ?? [],
         links: links ?? [],
         status,
-        date: date ? new Date(date) : null,
+        date: date
+          ? new Date(date).toISOString().split("T")[0]
+          : null,
         clientName,
         seoTitle,
         seoDescription,
