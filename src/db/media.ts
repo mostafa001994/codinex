@@ -1,16 +1,17 @@
-import { mysqlTable, varchar, int, datetime } from "drizzle-orm/mysql-core";
-import { sql } from "drizzle-orm";
+import {
+  pgTable,
+  varchar,
+  text,
+  integer,
+  timestamp,
+} from "drizzle-orm/pg-core";
 
-export const media = mysqlTable("media", {
-  id: varchar("id", { length: 191 }).primaryKey(),
-  url: varchar("url", { length: 500 }).notNull(),
-  alt: varchar("alt", { length: 500 }).default(""),
-  title: varchar("title", { length: 500 }).default(""),
-  folder: varchar("folder", { length: 191 }).default(""),
-  size: int("size").notNull(),
-  createdAt: datetime("created_at").default(sql`CURRENT_TIMESTAMP`),
+export const media = pgTable("media", {
+  id: varchar("id", { length: 255 }).primaryKey(),
+  url: text("url").notNull(),
+  size: integer("size").notNull(),
+  folder: varchar("folder", { length: 255 }),
+  alt: varchar("alt", { length: 255 }),
+  title: varchar("title", { length: 255 }),
+  createdAt: timestamp("created_at").defaultNow(),
 });
-
-
-
-
