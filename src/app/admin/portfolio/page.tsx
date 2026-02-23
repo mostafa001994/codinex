@@ -51,21 +51,22 @@ export default function PortfolioListPage() {
 
     loadItems(page, search);
   }
+async function deleteMany(ids: (string | number)[]) {
+  if (!confirm("حذف گروهی انجام شود؟")) return;
 
-  async function deleteMany(ids: number[]) {
-    if (!confirm("حذف گروهی انجام شود؟")) return;
+  const numericIds = ids.map((id) => Number(id));
 
-    await Promise.all(
-      ids.map((id) =>
-        fetch(`/api/admin/portfolio/${id}`, {
-          method: "DELETE",
-          credentials: "include",
-        })
-      )
-    );
+  await Promise.all(
+    numericIds.map((id) =>
+      fetch(`/api/admin/portfolio/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      })
+    )
+  );
 
-    loadItems(page, search);
-  }
+  loadItems(page, search);
+}
 
   return (
     <div className="text-gray-600 p-4 shadow-lg rounded bg-white">
