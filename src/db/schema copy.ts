@@ -1,42 +1,52 @@
 import {
-  pgTable,
-  serial,
-  integer,
+  int,
+  mysqlTable,
   varchar,
   text,
-  timestamp,
+  datetime,
+  serial,
+  json,
   date,
-  jsonb,
-} from "drizzle-orm/pg-core";
+  timestamp,
+} from "drizzle-orm/mysql-core";
+import { sql } from "drizzle-orm";
 import { relations } from "drizzle-orm";
 
+//
 // USERS
-export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
+//
+export const users = mysqlTable("users", {
+  id: int("id").primaryKey().autoincrement(),
   name: varchar("name", { length: 191 }).notNull(),
   email: varchar("email", { length: 191 }).notNull().unique(),
   password: varchar("password", { length: 191 }).notNull(),
   role: varchar("role", { length: 20 }).notNull().default("user"),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: datetime("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
 
+//
 // CATEGORIES
-export const categories = pgTable("categories", {
-  id: serial("id").primaryKey(),
+//
+export const categories = mysqlTable("categories", {
+  id: int("id").primaryKey().autoincrement(),
   name: varchar("name", { length: 191 }).notNull().unique(),
   slug: varchar("slug", { length: 191 }).notNull().unique(),
 });
 
+//
 // TAGS
-export const tags = pgTable("tags", {
-  id: serial("id").primaryKey(),
+//
+export const tags = mysqlTable("tags", {
+  id: int("id").primaryKey().autoincrement(),
   name: varchar("name", { length: 191 }).notNull().unique(),
   slug: varchar("slug", { length: 191 }).notNull().unique(),
 });
 
+//
 // BLOGS
-export const blogs = pgTable("blogs", {
-  id: serial("id").primaryKey(),
+//
+export const blogs = mysqlTable("blogs", {
+  id: int("id").primaryKey().autoincrement(),
   title: varchar("title", { length: 191 }).notNull(),
   slug: varchar("slug", { length: 191 }).notNull().unique(),
   content: text("content").notNull(),
@@ -45,51 +55,61 @@ export const blogs = pgTable("blogs", {
 
   seoDescription: text("seoDescription"),
 
-  authorId: integer("author_id"),
-  categoryId: integer("category_id"),
+  authorId: int("author_id"),
+  categoryId: int("category_id"),
 
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  createdAt: datetime("created_at").default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: datetime("updated_at").default(
+    sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`
+  ),
 });
 
+//
 // BLOG TAGS
-export const blogTags = pgTable("blog_tags", {
-  id: serial("id").primaryKey(),
-  blogId: integer("blog_id").notNull(),
-  tagId: integer("tag_id").notNull(),
+//
+export const blogTags = mysqlTable("blog_tags", {
+  id: int("id").primaryKey().autoincrement(),
+  blogId: int("blog_id").notNull(),
+  tagId: int("tag_id").notNull(),
 });
 
+//
 // COMMENTS
-export const comments = pgTable("comments", {
-  id: serial("id").primaryKey(),
-  blogId: integer("blog_id").notNull(),
+//
+export const comments = mysqlTable("comments", {
+  id: int("id").primaryKey().autoincrement(),
+  blogId: int("blog_id").notNull(),
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
   message: text("message").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// MEDIA
-export const media = pgTable("media", {
+//
+// MEDIA (مرکز مدیریت فایل‌ها)
+//
+export const media = mysqlTable("media", {
   id: varchar("id", { length: 191 }).primaryKey(),
   url: varchar("url", { length: 500 }).notNull(),
   alt: varchar("alt", { length: 500 }).default(""),
   title: varchar("title", { length: 500 }).default(""),
   folder: varchar("folder", { length: 191 }).default(""),
-  size: integer("size").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
+  size: int("size").notNull(),
+  createdAt: datetime("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
 
+//
 // PORTFOLIO
-export const portfolio = pgTable("portfolio", {
+//
+export const portfolio = mysqlTable("portfolio", {
   id: serial("id").primaryKey(),
   title: varchar("title", { length: 255 }),
   slug: varchar("slug", { length: 255 }),
   content: text("content"),
   imageUrl: varchar("imageUrl", { length: 500 }),
-  categoryId: integer("categoryId"),
-  technologies: jsonb("technologies"),
-  links: jsonb("links"),
+  categoryId: int("categoryId"),
+  technologies: json("technologies"),
+  links: json("links"),
   status: varchar("status", { length: 50 }),
   date: date("date"),
   clientName: varchar("clientName", { length: 255 }),
@@ -97,22 +117,28 @@ export const portfolio = pgTable("portfolio", {
   seoDescription: text("seoDescription"),
 });
 
+//
 // PORTFOLIO TAGS
-export const portfolioTags = pgTable("portfolio_tags", {
-  id: serial("id").primaryKey(),
-  portfolioId: integer("portfolio_id").notNull(),
-  tagId: integer("tag_id").notNull(),
+//
+export const portfolioTags = mysqlTable("portfolio_tags", {
+  id: int("id").primaryKey().autoincrement(),
+  portfolioId: int("portfolio_id").notNull(),
+  tagId: int("tag_id").notNull(),
 });
 
-// CONTENT MEDIA
-export const contentMedia = pgTable("content_media", {
-  id: serial("id").primaryKey(),
-  entityType: varchar("entity_type", { length: 50 }).notNull(),
-  entityId: integer("entity_id").notNull(),
+//
+// CONTENT MEDIA (جدول کلی گالری)
+//
+export const contentMedia = mysqlTable("content_media", {
+  id: int("id").primaryKey().autoincrement(),
+  entityType: varchar("entity_type", { length: 50 }).notNull(), // "blog" | "portfolio"
+  entityId: int("entity_id").notNull(),
   mediaId: varchar("media_id", { length: 191 }).notNull(),
 });
 
+//
 // RELATIONS
+//
 export const contentMediaRelations = relations(contentMedia, ({ one }) => ({
   media: one(media, {
     fields: [contentMedia.mediaId],

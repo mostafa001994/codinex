@@ -6,7 +6,7 @@ import { blogs, portfolio } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import { db } from "@/db";
 
-export default async function Home() {
+export default async function Contact() {
 
 
     const posts = await db.select().from(blogs).orderBy(desc(blogs.id)).limit(5);
