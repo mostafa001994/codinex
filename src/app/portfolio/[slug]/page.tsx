@@ -47,9 +47,9 @@ export default async function PortfolioPage({
         <h1 className="text-3xl font-bold text-cyan-900">{item.title}</h1>
 
 
-        {item.technologies.length > 0 && (
+        {Array.isArray(item.technologies) && item.technologies.length > 0 && (
           <div className="flex gap-2 mt-6 flex-wrap text-black">
-            {item.technologies.map((tech: string) => (
+            {item.technologies.map((tech) => (
               <span
                 key={tech}
                 className="px-3 py-1 bg-blue-100 rounded-full text-sm"
@@ -86,15 +86,15 @@ export default async function PortfolioPage({
           <div>
             <div className="relative overflow-hidden">
 
-            <Image
-              className="absolute top-0 right-0 min-h-full "
-              src="/laptop.png"
-              alt="Next.js logo"
-              width={800}
-              height={400}
-              priority
-            />
-            <GallerySlider images={gallery} />
+              <Image
+                className="absolute top-0 right-0 min-h-full "
+                src="/laptop.png"
+                alt="Next.js logo"
+                width={800}
+                height={400}
+                priority
+              />
+              <GallerySlider images={gallery} />
             </div>
 
           </div>
