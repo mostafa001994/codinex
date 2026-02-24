@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-export const dynamic = "force-dynamic";
 import SvgIcons from "./_icons";
 import Header from "./_Header";
 
